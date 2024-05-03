@@ -1,0 +1,31 @@
+{% extends 'base.jinja' %}
+
+<!-- index.jinja - for testing purposes -->
+
+{% block title %}
+<h1>Pets</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="pets-container">
+    {% for pet in avail_pets %}
+    <div>
+        <img src="{{ pet.photo_url }}">
+        <div>{{ pet.name }} is <b>Available</b></div>
+    </div>
+    {% endfor %}
+    {% for pet in unavail_pets %}
+    <div>
+        <img src="{{ pet.photo_url }}">
+        <div>{{ pet.name }} is <b>Not Available</b></div>
+    </div>
+    {% endfor %}
+</div>
+
+{# add a pet here #}
+<form action="/TBD">
+    <button>Add a Pet</button>
+</form>
+
+{% endblock %}

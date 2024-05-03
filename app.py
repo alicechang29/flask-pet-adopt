@@ -6,7 +6,7 @@ from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 
-from models import db, dbx
+from models import db, dbx, Pet
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -22,3 +22,20 @@ db.init_app(app)
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 toolbar = DebugToolbarExtension(app)
+
+
+@app.get('/')
+def show_homepage():
+    """Display the pet adoption homepage"""
+
+    # logic here to get all the pets in a list
+    q = db.select(Pet).where(Pet.available is True)
+    avail_pets = dbx(q).scalars().all()
+    q = db.select(Pet).where(Pet.available is False)
+    unavail_pets = dbx(q).scalars().all()
+
+    return render_template(
+        "index.jinja",
+        avail_pets=avail_pets,
+        unavail_pets=unavail_pets
+    )
