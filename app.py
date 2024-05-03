@@ -7,6 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 
 from models import db, dbx, Pet
+from forms import AddPetForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -29,9 +30,9 @@ def show_homepage():
     """Display the pet adoption homepage"""
 
     # logic here to get all the pets in a list
-    q = db.select(Pet).where(Pet.available is True)
+    q = db.select(Pet).where(Pet.available == "True")
     avail_pets = dbx(q).scalars().all()
-    q = db.select(Pet).where(Pet.available is False)
+    q = db.select(Pet).where(Pet.available == "False")
     unavail_pets = dbx(q).scalars().all()
 
     return render_template(
@@ -39,3 +40,25 @@ def show_homepage():
         avail_pets=avail_pets,
         unavail_pets=unavail_pets
     )
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add_pet():
+    form = AddPetForm()
+
+    if form.validate_on_submit():
+        pet = Pet()
+        pet.name = form.name.data
+        pet.species = form.species.data
+        pet.photo_url = form.photo_url.data
+        pet.age = form.age.data
+        pet.notes = form.notes.data
+        db.session.add(pet)
+        db.session.commit()
+        return redirect("/")
+
+    else:
+        return render_template(
+            "add_pet_form.jinja",
+            form=form
+        )
