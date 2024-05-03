@@ -12,13 +12,13 @@
     {% for pet in avail_pets %}
     <div>
         <img src="{{ pet.photo_url }}">
-        <div>{{ pet.name }} is <b>Available</b></div>
+        <div><a href="/{{ pet.id }}">{{ pet.name }}</a> is <b>Available</b></div>
     </div>
     {% endfor %}
     {% for pet in unavail_pets %}
     <div>
         <img src="{{ pet.photo_url }}">
-        <div>{{ pet.name }} is <b>Not Available</b></div>
+        <div><a href="/{{ pet.id }}">{{ pet.name }}</a> is <b>Not Available</b></div>
     </div>
     {% endfor %}
 </div>

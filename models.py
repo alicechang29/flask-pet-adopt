@@ -34,7 +34,7 @@ class Pet(db.Model):
     )
 
     age = db.mapped_column(
-        db.Text,  # make it a selection field inside the form
+        db.Text,
         nullable=False
     )
 

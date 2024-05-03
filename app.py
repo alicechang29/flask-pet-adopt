@@ -2,12 +2,12 @@
 
 import os
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound  # TODO: what is this?
 
 from models import db, dbx, Pet
-from forms import AddPetForm
+from forms import AddPetForm, EditPetForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -29,7 +29,6 @@ toolbar = DebugToolbarExtension(app)
 def show_homepage():
     """Display the pet adoption homepage"""
 
-    # logic here to get all the pets in a list
     q = db.select(Pet).where(Pet.available == "True")
     avail_pets = dbx(q).scalars().all()
     q = db.select(Pet).where(Pet.available == "False")
@@ -44,6 +43,8 @@ def show_homepage():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_pet():
+    """Shows add pet form and adds a pet to DB"""
+
     form = AddPetForm()
 
     if form.validate_on_submit():
@@ -53,12 +54,37 @@ def add_pet():
         pet.photo_url = form.photo_url.data
         pet.age = form.age.data
         pet.notes = form.notes.data
+
         db.session.add(pet)
         db.session.commit()
+
         return redirect("/")
 
     else:
         return render_template(
             "add_pet_form.jinja",
             form=form
+        )
+
+
+@app.route("/<int:pet_id>", methods=["GET", "POST"])
+def edit_pet(pet_id):
+    """Shows edit pet form and allows for edits"""
+
+    pet = db.get_or_404(Pet, pet_id)
+    form = EditPetForm(obj=pet)
+
+    if form.validate_on_submit():
+        pet.photo_url = form.photo_url.data
+        pet.notes = form.notes.data
+        pet.available = form.available.data
+
+        db.session.commit()
+        return redirect("/")
+
+    else:
+        return render_template(
+            "edit_pet_form.jinja",
+            form=form,
+            pet=pet
         )
