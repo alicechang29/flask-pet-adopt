@@ -18,12 +18,12 @@ class Pet(db.Model):
     )
 
     name = db.mapped_column(
-        db.Text,
+        db.Text,  # String
         nullable=False,
     )
 
     species = db.mapped_column(
-        db.Text,
+        db.Text,  # String
         nullable=False,
     )
 
@@ -34,7 +34,7 @@ class Pet(db.Model):
     )
 
     age = db.mapped_column(
-        db.Text,
+        db.Text,  # String
         nullable=False
     )
 

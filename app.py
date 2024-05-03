@@ -4,7 +4,6 @@ import os
 
 from flask import Flask, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from werkzeug.exceptions import NotFound  # TODO: what is this?
 
 from models import db, dbx, Pet
 from forms import AddPetForm, EditPetForm
@@ -29,6 +28,7 @@ toolbar = DebugToolbarExtension(app)
 def show_homepage():
     """Display the pet adoption homepage"""
 
+    # Note: when rendering a list of things, order it - sort by availability
     q = db.select(Pet).where(Pet.available == "True")
     avail_pets = dbx(q).scalars().all()
     q = db.select(Pet).where(Pet.available == "False")
@@ -36,7 +36,7 @@ def show_homepage():
 
     return render_template(
         "index.jinja",
-        avail_pets=avail_pets,
+        avail_pets=avail_pets,  # FIXME: send only 1 query for pets
         unavail_pets=unavail_pets
     )
 
@@ -57,7 +57,7 @@ def add_pet():
 
         db.session.add(pet)
         db.session.commit()
-
+        # TODO: add a flash message
         return redirect("/")
 
     else:
@@ -80,6 +80,7 @@ def edit_pet(pet_id):
         pet.available = form.available.data
 
         db.session.commit()
+        # TODO: add a flash message
         return redirect("/")
 
     else:

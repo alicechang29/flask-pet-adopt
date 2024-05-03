@@ -9,17 +9,20 @@ class AddPetForm(FlaskForm):
     """Form for adding a pet."""
 
     name = StringField("Pet Name")
-    species = StringField(
+
+    species = StringField(  # make it a SelectField
         "Species",
         validators=[AnyOf(values=['cat', 'dog', 'porcupine'])]
     )
+
     photo_url = StringField(
         "Photo URL",
         validators=[
-            URL(require_tld=False),
+            URL(require_tld=False),  # should be true for prod
             Optional()
         ]
     )
+
     age = SelectField(
         "Age",
         choices=[
@@ -28,13 +31,15 @@ class AddPetForm(FlaskForm):
             ('adult', 'Adult'),
             ('senior', 'Senior')
         ],
-        validators=[AnyOf(values=[
+        validators=[AnyOf(values=[  # don't need validators for select field
             'baby',
             'young',
             'adult',
             'senior'
         ])]
     )
+
+    # add optional validator. if optional, consider character limits
     notes = TextAreaField("Notes")
 
 
@@ -49,6 +54,7 @@ class EditPetForm(FlaskForm):
         ]
     )
 
+    # add optional validator. if optional, consider character limits
     notes = TextAreaField("Notes")
 
     available = BooleanField("Available")

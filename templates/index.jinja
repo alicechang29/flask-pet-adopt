@@ -9,6 +9,7 @@
 {% block content %}
 
 <div class="pets-container">
+<!-- TODO: make this an if else statement -->
     {% for pet in avail_pets %}
     <div>
         <img src="{{ pet.photo_url }}">
