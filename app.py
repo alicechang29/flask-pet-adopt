@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, dbx, Pet
@@ -29,15 +29,12 @@ def show_homepage():
     """Display the pet adoption homepage"""
 
     # Note: when rendering a list of things, order it - sort by availability
-    q = db.select(Pet).where(Pet.available == "True")
-    avail_pets = dbx(q).scalars().all()
-    q = db.select(Pet).where(Pet.available == "False")
-    unavail_pets = dbx(q).scalars().all()
+    q = db.select(Pet).order_by(Pet.available == "False", Pet.name)
+    pets = dbx(q).scalars().all()
 
     return render_template(
         "index.jinja",
-        avail_pets=avail_pets,  # FIXME: send only 1 query for pets
-        unavail_pets=unavail_pets
+        avail_pets=pets
     )
 
 
@@ -57,7 +54,9 @@ def add_pet():
 
         db.session.add(pet)
         db.session.commit()
-        # TODO: add a flash message
+
+        flash(f'Added {pet.name}!')
+
         return redirect("/")
 
     else:
@@ -80,7 +79,9 @@ def edit_pet(pet_id):
         pet.available = form.available.data
 
         db.session.commit()
-        # TODO: add a flash message
+
+        flash(f'Edited {pet.name}!')
+
         return redirect("/")
 
     else:
