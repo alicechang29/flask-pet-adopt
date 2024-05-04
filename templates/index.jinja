@@ -9,17 +9,16 @@
 {% block content %}
 
 <div class="pets-container">
-<!-- TODO: make this an if else statement -->
     {% for pet in avail_pets %}
     <div>
         <img src="{{ pet.photo_url }}">
-        <div><a href="/{{ pet.id }}">{{ pet.name }}</a> is <b>Available</b></div>
-    </div>
-    {% endfor %}
-    {% for pet in unavail_pets %}
-    <div>
-        <img src="{{ pet.photo_url }}">
-        <div><a href="/{{ pet.id }}">{{ pet.name }}</a> is <b>Not Available</b></div>
+        <div><a href="/{{ pet.id }}">{{ pet.name }}</a> is
+        {% if pet.available %}
+            <b>Available</b>
+        {% else %}
+            <b>Not Available</b>
+        {% endif %}
+        </div>
     </div>
     {% endfor %}
 </div>
